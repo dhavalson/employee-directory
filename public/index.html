@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Employee Info</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    label, select { font-size: 1rem; margin-bottom: 10px; display: block; }
+    .info { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h2>Employee Directory</h2>
+  <label for="employeeCode">Select Employee Code:</label>
+  <select id="employeeCode">
+    <option value="">--Select--</option>
+  </select>
+
+  <div class="info" id="employeeInfo"></div>
+
+  <script>
+    async function fetchEmployeeCodes() {
+      const res = await fetch('/api/employees');
+      const data = await res.json();
+      const select = document.getElementById('employeeCode');
+      data.forEach(emp => {
+        const option = document.createElement('option');
+        option.value = emp.code;
+        option.textContent = emp.code;
+        select.appendChild(option);
+      });
+    }
+
+    async function fetchEmployeeDetails(code) {
+      if (!code) return;
+      const res = await fetch(`/api/employees/${code}`);
+      const emp = await res.json();
+      document.getElementById('employeeInfo').innerHTML = `
+        <p><strong>Name:</strong> ${emp.name}</p>
+        <p><strong>Contact:</strong> ${emp.contact}</p>
+        <p><strong>Email:</strong> ${emp.email}</p>
+      `;
+    }
+
+    document.getElementById('employeeCode').addEventListener('change', (e) => {
+      fetchEmployeeDetails(e.target.value);
+    });
+
+    fetchEmployeeCodes();
+  </script>
+</body>
+</html>
