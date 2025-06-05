@@ -28,7 +28,7 @@ app.get('/api/employees/:code', (req, res) => {
 });
 
 // Fallback: For unmatched routes, serve index.html (important for SPA routing)
-app.get('*', (req, res) => {
+app.get('/:path(*)', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
