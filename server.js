@@ -7,7 +7,13 @@ const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Connect to SQLite database
-const db = new sqlite3.Database('./employees.db');
+const db = new sqlite3.Database('./employees.db', (err) => {
+  if (err) {
+    console.error('Could not connect to database', err);
+  } else {
+    console.log('Connected to SQLite database');
+  }
+});
 
 // API: Get all employee codes
 app.get('/api/employees', (req, res) => {
@@ -27,13 +33,15 @@ app.get('/api/employees/:code', (req, res) => {
   });
 });
 
-// Fallback: For unmatched routes, serve index.html (important for SPA routing)
-app.get('/:path*', (req, res) => {
+// Fallback: For unmatched routes, serve index.html
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Port (for Render or local)
+
+// Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
